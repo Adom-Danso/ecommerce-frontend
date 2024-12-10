@@ -11,7 +11,7 @@ const EditProfile = ({ fetchUser, isLoggedIn, currentUser, setPopupType, setPopu
     lastName: currentUser?.lastName || "",
     email: currentUser?.email || "",
     phone: currentUser?.phone || "",
-    address1: currentUser?.address1 || "",
+    address1: currentUser?.address || "",
     address2: currentUser?.address2 || "",
     country: currentUser?.country || "",
     city: currentUser?.city || "",

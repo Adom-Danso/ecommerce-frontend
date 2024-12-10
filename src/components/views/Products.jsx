@@ -3,17 +3,19 @@ import { motion, AnimatePresence } from 'framer-motion'; // Import Framer Motion
 import ProductCard from './ProductCard';
 import {LoadingIndicator} from './LoadingIndicator'
 
-const Products = ({ isLoggedIn, fetchCartItems, setPopupType, setPopupMessage,setShowPopup }) => {
+const Products = ({ isLoggedIn, fetchCartItems, searchInput, setPopupType, setPopupMessage, setShowPopup }) => {
   const apiUrl = import.meta.env.VITE_API_URL
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const fetchProducts = async () => {
     try {
       const response = await fetch(`${apiUrl}/get_products`);
       const data = await response.json();
       setProducts(data.products);
+      setFilteredProducts(data.products)
     } catch (error) {
       setPopupType('error')
       setPopupMessage('Unable to fetch products. Please try again later.')
@@ -27,9 +29,27 @@ const Products = ({ isLoggedIn, fetchCartItems, setPopupType, setPopupMessage,se
     setLoading(false);
   };
 
+  const search = async () => {
+    if (searchInput?.length < 1) {
+      setFilteredProducts(products)
+    } else {
+      const filtered = products.filter(product => 
+        product.name.toLowerCase().includes(searchInput)
+      );
+
+      setFilteredProducts(filtered);
+    }
+
+  }
+
+
   useEffect(() => {
     initializePage();
   }, []);
+
+  useEffect(() => {
+    search()
+  }, [searchInput])
 
   if (loading) {
     return (
@@ -40,7 +60,7 @@ const Products = ({ isLoggedIn, fetchCartItems, setPopupType, setPopupMessage,se
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        {products.map((product) => (
+        {filteredProducts?.map((product) => (
           <ProductCard
             key={product.id}
             product={product}

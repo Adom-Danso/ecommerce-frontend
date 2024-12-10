@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
-const Navbar = ({ isLoggedIn, cartItems, logout }) => {
+const Navbar = ({ isLoggedIn, searchInput, setSearchInput, cartItems, logout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false); // Track visibility of mobile search bar
 
@@ -13,6 +13,12 @@ const Navbar = ({ isLoggedIn, cartItems, logout }) => {
   const toggleSearchBar = () => {
     setIsSearchVisible(!isSearchVisible); // Toggle search visibility on mobile
   };
+
+  const handleSearch = (e) => {
+    if (e.keyCode === 13) {
+      setSearchInput(e.target.value.trim())
+    }
+  }
 
   return (
     <header className="bg-gray-900 shadow-lg sticky top-0 z-50">
@@ -39,12 +45,27 @@ const Navbar = ({ isLoggedIn, cartItems, logout }) => {
 
           {/* Search Bar (visible on larger screens, mobile toggle) */}
           <div className="flex items-center space-x-4">
-            <div className="hidden lg:block">
+            {/* Search Input for Larger Screens */}
+            <div className="hidden lg:flex items-center space-x-2">
               <input
-                type="text"
+                type="search"
+                id="search"
                 placeholder="Search products..."
-                className="bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-4 py-2"
+                onChange={handleSearch}
+                onKeyDown={handleSearch}
               />
+              {/* Search Button */}
+              <button
+                className="border-2 border-gray-500 text-white hover:border-gray-800 text-white px-4 py-2 rounded-lg transition"
+                onClick={() => {
+                  setSearchInput(document.getElementById('search').value.trim())
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+              </button>
             </div>
 
             {/* Mobile Search Button */}

@@ -19,6 +19,10 @@ const ProductCard = ({ product, isLoggedIn, fetchCartItems, onClick, setPopupTyp
       return;
     }
 
+    if (quantity <= 0) {
+      setQuantity(1)
+    }
+
     setIsAddingToCart(true);
 
     try {

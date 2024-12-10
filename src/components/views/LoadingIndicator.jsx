@@ -1,5 +1,5 @@
 import { ThreeDot, OrbitProgress } from 'react-loading-indicators';
-import DarkBackground from './DarkBackground'
+import {DarkBackground, AdminDarkBackground} from './DarkBackground'
 
 export const LoadingIndicator = () => {
   return (
@@ -12,6 +12,20 @@ export const LoadingIndicator = () => {
           textColor="#facc15"
         />
     </DarkBackground>
+  );
+};
+
+export const AdminLoadingIndicator = () => {
+  return (
+    <AdminDarkBackground>
+      <ThreeDot
+          variant="bounce"
+          color="#facc15"
+          size="medium"
+          text="Loading..."
+          textColor="#facc15"
+        />
+    </AdminDarkBackground>
   );
 };
 

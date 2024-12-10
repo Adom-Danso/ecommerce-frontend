@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { LoadingIndicator } from './LoadingIndicator'
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import PopupMessage from './PopupMessage';
 
 
@@ -10,9 +9,10 @@ const Checkout = ({ cartItems, currentUser, fetchCartItems, isLoggedIn, setPopup
   const apiUrl = import.meta.env.VITE_API_URL
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
+  const [products, setProducts] = useState(null)
 
   const [step, setStep] = useState(1); // 1: Address, 2: Summary, 3: Payment
-  const totalPrice = cartItems.totalPrice;
+  const [totalPrice, setTotalPrice] = useState(0); // Global total price state
 
   const [paymentAddress, setAddress] = useState({
     email: currentUser.email || "",
@@ -23,6 +23,13 @@ const Checkout = ({ cartItems, currentUser, fetchCartItems, isLoggedIn, setPopup
     country: currentUser.country || "",
   });
   const [errors, setErrors] = useState({});
+
+  const calculateTotalPrice = (items) => {
+    return items.products.reduce(
+      (acc, item) => acc + item.product.price * item.quantity,
+      0
+    );
+  };
 
   function generateRandomReference() {
     const randomNumber = Math.random().toString(36).substr(2, 9); // Generate random number in base36 format
@@ -151,12 +158,17 @@ const Checkout = ({ cartItems, currentUser, fetchCartItems, isLoggedIn, setPopup
   };
 
 
+  
   const initialiseCheckout = async () => {
     try {
       setIsLoading(true);
       await fetchCartItems();
+      if (cartItems.products) {
+        const total = calculateTotalPrice(cartItems);
+        setTotalPrice(total); // Update global totalPrice
+      }
     } catch (error) {
-      console.error('Failed to fetch cart items:', error);
+      console.error("Failed to fetch cart items:", error);
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +176,7 @@ const Checkout = ({ cartItems, currentUser, fetchCartItems, isLoggedIn, setPopup
 
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate('/'); // Navigate back to the previous page if not logged in
+      navigate("/"); // Navigate back to the previous page if not logged in
     } else {
       initialiseCheckout();
     }
@@ -278,13 +290,17 @@ const Checkout = ({ cartItems, currentUser, fetchCartItems, isLoggedIn, setPopup
               <h2 className="text-xl font-semibold">Order Summary</h2>
               <ul className="space-y-2">
                 {cartItems.products.map((item, index) => (
-                  <li key={index} className="flex justify-between">
-                    <span>{item.name}</span>
-                    <span>GH₵{item.price}</span>
+                  <li key={index} className="flex justify-between items-center">
+                    <span>{item.product.description} (x{item.quantity})</span>
+                    <span>GH₵{(item.product.price * item.quantity).toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
-              <div className="font-semibold mt-4">Total: GH₵{totalPrice}</div>
+              <div className="font-semibold mt-4">
+                Total: GH₵{cartItems.products
+                  .reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+                  .toFixed(2)}
+              </div>
               <div className="flex space-x-4 mt-6">
                 <button
                   onClick={handlePrev}
@@ -303,64 +319,68 @@ const Checkout = ({ cartItems, currentUser, fetchCartItems, isLoggedIn, setPopup
             </motion.div>
           )}
 
+
           {step === 3 && (
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={accordionVariants}
-              className="space-y-4"
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={accordionVariants}
+            className="space-y-4"
+          >
+            <h2 className="text-xl font-semibold">Payment Details</h2>
+            <div>
+              <label className="block mb-1">Email</label>
+              <input
+                type="email"
+                id="email"
+                className="w-full border rounded py-2 px-3"
+                value={paymentAddress?.email}
+                onChange={(e) =>
+                  setAddress({ ...paymentAddress, email: e.target.value })
+                }
+              />
+            </div>
+            <div>
+              <label className="block mb-1">Amount</label>
+              <input
+                type="text"
+                id="amount"
+                className="w-full border rounded py-2 px-3"
+                value={cartItems.products
+                  .reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+                  .toFixed(2)}
+                readOnly
+              />
+            </div>
+            <div>
+              <label className="block mb-1">First Name</label>
+              <input
+                type="text"
+                className="w-full border rounded py-2 px-3"
+                defaultValue={currentUser?.firstName}
+                readOnly
+              />
+            </div>
+            <div>
+              <label className="block mb-1">Last Name</label>
+              <input
+                type="text"
+                className="w-full border rounded py-2 px-3"
+                defaultValue={currentUser?.lastName}
+                readOnly
+              />
+            </div>
+            <button
+              type="button"
+              className="bg-green-500 text-white px-4 py-2 rounded mt-4"
+              id="pay-button"
+              onClick={payWithPaystack}
             >
-              <h2 className="text-xl font-semibold">Payment Details</h2>
-              <div>
-                <label className="block mb-1">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  className="w-full border rounded py-2 px-3"
-                  value={paymentAddress?.email}
-                  onChange={(e) =>
-                      setAddress({ ...paymentAddress, email: e.target.value })
-                    }
-                />
-              </div>
-              <div>
-                <label className="block mb-1">Amount</label>
-                <input
-                  type="text"
-                  id='amount'
-                  className="w-full border rounded py-2 px-3"
-                  value={totalPrice}
-                  readOnly
-                />
-              </div>
-              <div>
-                <label className="block mb-1">First Name</label>
-                <input
-                  type="text"
-                  className="w-full border rounded py-2 px-3"
-                  defaultValue={currentUser?.firstName}
-                  readOnly
-                />
-              </div>
-              <div>
-                <label className="block mb-1">Last Name</label>
-                <input
-                  type="text"
-                  className="w-full border rounded py-2 px-3"
-                  defaultValue={currentUser?.lastName}
-                  readOnly
-                />
-              </div>
-              <button
-                type="button"
-                className="bg-green-500 text-white px-4 py-2 rounded mt-4"
-                id='pay-button'
-                onClick={payWithPaystack}
-              >
-                Place Order
-              </button>
-            </motion.div>
-          )}
+              Place Order
+            </button>
+          </motion.div>
+        )}
+
         </div>
       </form>
     </div>

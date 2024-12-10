@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { LoadingIndicator } from './LoadingIndicator';
 import { Link } from 'react-router-dom';
-import DarkBackground from './DarkBackground';
+import {DarkBackground} from './DarkBackground';
 import OrderModal from './OrderModal';
 import { useNavigate } from 'react-router-dom';
 

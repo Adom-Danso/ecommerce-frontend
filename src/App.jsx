@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 import Navbar from './components/views/Navbar';
 import Products from './components/views/Products';
 import CartPage from './components/views/Cart';
@@ -10,7 +12,11 @@ import Checkout from './components/views/Checkout';
 import RegistrationPage from './components/auth/Register'
 import LoginPage from './components/auth/Login'
 import {LoadingIndicator} from './components/views/LoadingIndicator'
-import { useNavigate } from 'react-router-dom';
+import Dashboard from './components/admin/Dashboard';
+import Inbox from './components/admin/Inbox';
+import Orders from './components/admin/Orders';
+import Users from './components/admin/Users';
+import AdminProducts from './components/admin/Products';
 
 function App() {
   const apiUrl = import.meta.env.VITE_API_URL
@@ -23,6 +29,7 @@ function App() {
   const [showPopup, setShowPopup] = useState(false)
   const [popupMessage, setPopupMessage] = useState(null)
   const [popupType, setPopupType] = useState(null)
+  const [searchInput, setSearchInput] = useState('')
   const navigate = useNavigate()
 
   const logout = async () => {
@@ -100,22 +107,32 @@ function App() {
   }, [isLoggedIn, currentUser]);
 
   return (
-    <div>
+    <div className="main">
       {globalLoading ? (
           <LoadingIndicator />
         ) : (
         <>
-          <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} cartItems={cartItems} logout={logout} />
+          <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} cartItems={cartItems} logout={logout} searchInput={searchInput} setSearchInput={setSearchInput} />
           { showPopup && <PopupMessage message={popupMessage} type={popupType} />}
           <Routes>
             <Route path="/" element={<Products isLoggedIn={isLoggedIn} />} fetchCartItems={fetchCartItems} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} />
-            <Route path="/home" element={<Products isLoggedIn={isLoggedIn} fetchCartItems={fetchCartItems} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup}/>} />
+            <Route path="/home" element={<Products isLoggedIn={isLoggedIn} fetchCartItems={fetchCartItems} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} searchInput={searchInput} />} />
+
             <Route path="/profile" element={<ProfilePage isLoggedIn={isLoggedIn} currentUser={currentUser} />} />
             <Route path="/edit-profile" element={<EditProfile fetchUser={fetchUser} isLoggedIn={isLoggedIn} currentUser={currentUser} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup}  />} />
             <Route path="/cart" element={<CartPage cartItems={cartItems} isLoggedIn={isLoggedIn} fetchCartItems={fetchCartItems} />} />
-            <Route path="/checkout" element={<Checkout isLoggedIn={isLoggedIn} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} currentUser={currentUser} cartItems={cartItems} fetchCartItems={fetchCartItems} isLoggedIn={isLoggedIn} />} />
+            <Route path="/checkout" element={<Checkout setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} currentUser={currentUser} cartItems={cartItems} fetchCartItems={fetchCartItems} isLoggedIn={isLoggedIn} />} />
+
             <Route path="/register" element={<RegistrationPage fetchUser={fetchUser} isLoggedIn={isLoggedIn} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} />} />
             <Route path="/login" element={<LoginPage fetchUser={fetchUser} isLoggedIn={isLoggedIn} />} />
+
+
+            <Route path="/admin" element={<Dashboard currentUser={currentUser} />} />
+            <Route path="/admin/dashboard" element={<Dashboard currentUser={currentUser} />} />
+            <Route path="/admin/inbox" element={<Inbox currentUser={currentUser} />} />
+            <Route path="/admin/orders" element={<Orders currentUser={currentUser} />} />
+            <Route path="/admin/users" element={<Users currentUser={currentUser} />} />
+            <Route path="/admin/products" element={<AdminProducts currentUser={currentUser} />} />
           </Routes>
         </>
       )}
