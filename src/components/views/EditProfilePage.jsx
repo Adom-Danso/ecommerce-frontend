@@ -216,7 +216,7 @@ const EditProfile = ({ fetchUser, isLoggedIn, currentUser, setPopupType, setPopu
               className={`w-full md:w-1/2 font-semibold px-4 py-2 rounded-md ${
                 isSubmitting
                   ? "bg-gray-500 text-gray-300 cursor-not-allowed"
-                  : "bg-emerald-700 text-white hover:bg-emerald-800 active:bg-emerald-700"
+                  : "bg-green-700 text-white hover:bg-green-800 active:bg-green-700"
               }`}
             >
               {isSubmitting ? <SpinningIndicator /> : "Save Changes"}

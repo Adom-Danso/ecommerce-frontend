@@ -152,7 +152,7 @@ const LoginPage = ({ fetchUser, isLoggedIn }) => {
         <div>
           <button
             type="submit"
-            className="w-full py-3 bg-yellow-500 text-white font-semibold rounded-md hover:bg-yellow-600 transition duration-300"
+            className="w-full py-3 bg-yellow-700 text-white font-semibold rounded-md hover:bg-yellow-800 transition duration-300"
             disabled={isSubmitting}
           >
             {isSubmitting ? <SpinningIndicator /> : 'Log In'}
@@ -160,7 +160,7 @@ const LoginPage = ({ fetchUser, isLoggedIn }) => {
         </div>
 
         <div className="text-center mt-4">
-          <a href="/forgot-password" className="text-yellow-500 hover:text-yellow-600 transition duration-300">
+          <a href="/forgot-password" className="text-yellow-700 hover:text-yellow-800 transition duration-300">
             Forgot Password?
           </a>
         </div>
@@ -168,7 +168,7 @@ const LoginPage = ({ fetchUser, isLoggedIn }) => {
         <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
             Don’t have an account?{' '}
-            <Link to="/register" className="text-yellow-500 hover:text-yellow-600 transition duration-300">
+            <Link to="/register" className="text-yellow-700 hover:text-yellow-800 transition duration-300">
               Sign Up
             </Link>
           </p>

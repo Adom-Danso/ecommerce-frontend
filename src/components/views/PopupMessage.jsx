@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const PopupMessage = ({ message, type }) => {
+const PopupMessage = ({ message, type, setShowPopup }) => {
   const [isVisible, setIsVisible] = useState(true);
 
-  const handleClose = () => setIsVisible(false);
+  const handleClose = () => {
+    setIsVisible(false)
+    setShowPopup(false)
+  };
 
   // Styles based on message type
   const typeStyles = {

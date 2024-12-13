@@ -150,7 +150,6 @@ const RegistrationPage = ({ fetchUser, isLoggedIn, setPopupType, setPopupMessage
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Name */}
-        <div>
           <div>
             <label htmlFor="firstName" className="block text-gray-700 font-medium mb-2">First Name</label>
               <input
@@ -177,7 +176,6 @@ const RegistrationPage = ({ fetchUser, isLoggedIn, setPopupType, setPopupMessage
               />
               {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
           </div>
-        </div>
 
         {/* Email */}
         <div>
@@ -235,7 +233,7 @@ const RegistrationPage = ({ fetchUser, isLoggedIn, setPopupType, setPopupMessage
             className="h-5 w-5 text-yellow-500 border-gray-300 rounded focus:ring-2 focus:ring-yellow-500"
           />
           <label htmlFor="termsAccepted" className="ml-2 text-gray-700">
-            I agree to the <span className="text-yellow-500">Terms & Conditions</span>
+            I agree to the <span className="text-yellow-700">Terms & Conditions</span>
           </label>
           {errors.termsAccepted && <p className="text-red-500 text-sm mt-1">{errors.termsAccepted}</p>}
         </div>
@@ -244,7 +242,7 @@ const RegistrationPage = ({ fetchUser, isLoggedIn, setPopupType, setPopupMessage
         <div>
           <button
             type="submit"
-            className="w-full py-3 bg-yellow-500 text-white font-semibold rounded-md hover:bg-yellow-600 transition duration-300"
+            className="w-full py-3 bg-yellow-700 text-white font-semibold rounded-md hover:bg-yellow-800 transition duration-300"
             disabled={isSubmitting}
           >
             {isSubmitting ? <SpinningIndicator /> : 'Create Account'}

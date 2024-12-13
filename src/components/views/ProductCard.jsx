@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import {useNavigate} from 'react-router-dom';
+
 import {SpinningIndicator} from './LoadingIndicator'
 
 
-const ProductCard = ({ product, isLoggedIn, fetchCartItems, onClick, setPopupType, setPopupMessage,setShowPopup }) => {
+const ProductCard = ({ product, isLoggedIn, fetchCartItems, onClick, setPopupType, setPopupMessage, setShowPopup }) => {
   const apiUrl = import.meta.env.VITE_API_URL
+  const navigate = useNavigate()
 
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -91,7 +94,7 @@ const ProductCard = ({ product, isLoggedIn, fetchCartItems, onClick, setPopupTyp
               handleAddToCart();
             }}
             className={`w-full mt-4 py-2 ${
-              isAddingToCart ? 'bg-yellow-400' : 'bg-yellow-500 hover:bg-yellow-600'
+              isAddingToCart ? 'bg-yellow-700' : 'bg-yellow-700 hover:bg-yellow-800'
             } text-white rounded-lg transition duration-300`}
             disabled={isAddingToCart}
           >

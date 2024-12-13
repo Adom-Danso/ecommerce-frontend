@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { ArrowDownTrayIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Button, CardBody, Chip, CardFooter, Avatar, IconButton, Tooltip, Input } from "@material-tailwind/react";
+import {useNavigate} from 'react-router-dom';
+
 import { AdminSidebar } from './Sidebar';
 import { LoadingIndicator } from '../views/LoadingIndicator';
 
-const TABLE_HEAD = ["Order Details", "Items", "Amount", "Delivery details", "Date", "Status", ""];
+const TABLE_HEAD = ["Product Details", "Price(GHC)", "Date Added", "Image", ""];
 
-const Orders = ({ currentUser }) => {
+const products = ({ currentUser }) => {
     const apiUrl = import.meta.env.VITE_API_URL;
+    const navigate = useNavigation()
     const [isLoading, setIsLoading] = useState(true);
-    const [orders, setOrders] = useState([]);
+    const [products, setProducts] = useState([]);
 
-    const fetchOrders = async () => {
+    const fetchProducts = async () => {
         try {
             const response = await fetch(`${apiUrl}/admin/get-products`, {
                 method: 'GET',
@@ -22,21 +25,25 @@ const Orders = ({ currentUser }) => {
                 throw new Error(`Error: ${response.statusText}`);
             }
             const data = await response.json();
-            setOrders(data);
+            setProducts(data);
         } catch (error) {
             console.error('Failed to fetch database:', error);
-            setOrders(null);
+            setProducts(null);
         }
     };
 
     const initialisePage = async () => {
         setIsLoading(true);
-        await fetchOrders();
+        await fetchProducts();
         setIsLoading(false);
     };
 
     useEffect(() => {
-        initialisePage();
+    	if (currentUser.role === 'admin') {
+    		initialisePage()
+    	} else {
+    		navigate('/home')
+    	}
     }, []);
 
     return (
@@ -51,10 +58,10 @@ const Orders = ({ currentUser }) => {
 		        <div className="mb-8 flex items-center justify-between gap-8">
 		          <div>
 		            <Typography variant="h5" color="blue-gray">
-		              Members list
+		              Products list
 		            </Typography>
 		            <Typography color="gray" className="mt-1 font-normal">
-		              See information about all members
+		              See information about all products
 		            </Typography>
 		          </div>
 		        </div>
@@ -88,9 +95,9 @@ const Orders = ({ currentUser }) => {
 		            </tr>
 		          </thead>
 		          <tbody>
-		            {orders?.map(
-		              ({ id, username, orderName, orderItems, status, deliveryDetails, totalPrice, date }, index) => {
-		                const isLast = index === orders.length - 1;
+		            {products?.map(
+		              ({ id, name, description, price, date, image_name }, index) => {
+		                const isLast = index === products.length - 1;
 		                const classes = isLast
 		                  ? "p-4"
 		                  : "p-4 border-b border-blue-gray-50";
@@ -105,14 +112,14 @@ const Orders = ({ currentUser }) => {
 		                            color="blue-gray"
 		                            className="font-normal"
 		                          >
-		                            {username}
+		                            {name}
 		                          </Typography>
 		                          <Typography
 		                            variant="small"
 		                            color="blue-gray"
 		                            className="font-normal opacity-70"
 		                          >
-		                            {orderName}
+		                            {description}
 		                          </Typography>
 		                        </div>
 		                      </div>
@@ -124,27 +131,9 @@ const Orders = ({ currentUser }) => {
 		                          color="blue-gray"
 		                          className="font-normal"
 		                        >
-		                          {JSON.stringify(orderItems)}
+		                          {price}
 		                        </Typography>
 		                      </div>
-		                    </td>
-		                    <td className={classes}>
-		                      <Typography
-		                        variant="small"
-		                        color="blue-gray"
-		                        className="font-normal"
-		                      >
-		                        {totalPrice}
-		                      </Typography>
-		                    </td>
-		                    <td className={classes}>
-		                      <Typography
-		                        variant="small"
-		                        color="blue-gray"
-		                        className="font-normal"
-		                      >
-		                        {deliveryDetails}
-		                      </Typography>
 		                    </td>
 		                    <td className={classes}>
 		                      <Typography
@@ -161,9 +150,27 @@ const Orders = ({ currentUser }) => {
 		                        color="blue-gray"
 		                        className="font-normal"
 		                      >
-		                        {status}
+		                        {image_name}
 		                      </Typography>
 		                    </td>
+		                    {/*<td className={classes}>
+		                      <Typography
+		                        variant="small"
+		                        color="blue-gray"
+		                        className="font-normal"
+		                      >
+		                        {date}
+		                      </Typography>
+		                    </td>
+		                    <td className={classes}>
+		                      <Typography
+		                        variant="small"
+		                        color="blue-gray"
+		                        className="font-normal"
+		                      >
+		                        {status}
+		                      </Typography>
+		                    </td>*/}
 		                    <td className={classes}>
 		                      <Tooltip content="Edit User">
 		                        <IconButton variant="text">
@@ -184,4 +191,4 @@ const Orders = ({ currentUser }) => {
     );
 };
 
-export default Orders;
+export default products;

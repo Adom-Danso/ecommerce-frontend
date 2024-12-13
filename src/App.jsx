@@ -44,7 +44,7 @@ function App() {
     setPopupMessage('Successfully logged out')
     setPopupType('info')
     setShowPopup(true)
-    navigate('/')
+    navigate('/home')
   }
 
   const fetchUser = async () => {
@@ -113,26 +113,38 @@ function App() {
         ) : (
         <>
           <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} cartItems={cartItems} logout={logout} searchInput={searchInput} setSearchInput={setSearchInput} />
-          { showPopup && <PopupMessage message={popupMessage} type={popupType} />}
+          { showPopup && <PopupMessage message={popupMessage} type={popupType} setShowPopup={setShowPopup} />}
           <Routes>
-            <Route path="/" element={<Products isLoggedIn={isLoggedIn} />} fetchCartItems={fetchCartItems} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} />
+            <Route path="/" element={<Products isLoggedIn={isLoggedIn} fetchCartItems={fetchCartItems} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} searchInput={searchInput} />} />
             <Route path="/home" element={<Products isLoggedIn={isLoggedIn} fetchCartItems={fetchCartItems} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} searchInput={searchInput} />} />
 
-            <Route path="/profile" element={<ProfilePage isLoggedIn={isLoggedIn} currentUser={currentUser} />} />
-            <Route path="/edit-profile" element={<EditProfile fetchUser={fetchUser} isLoggedIn={isLoggedIn} currentUser={currentUser} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup}  />} />
-            <Route path="/cart" element={<CartPage cartItems={cartItems} isLoggedIn={isLoggedIn} fetchCartItems={fetchCartItems} />} />
-            <Route path="/checkout" element={<Checkout setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} currentUser={currentUser} cartItems={cartItems} fetchCartItems={fetchCartItems} isLoggedIn={isLoggedIn} />} />
+            { !isLoggedIn && (
+              <>
+                <Route path="/register" element={<RegistrationPage fetchUser={fetchUser} isLoggedIn={isLoggedIn} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} />} />
+                <Route path="/login" element={<LoginPage fetchUser={fetchUser} isLoggedIn={isLoggedIn} />} />
+              </>
+            )}
 
-            <Route path="/register" element={<RegistrationPage fetchUser={fetchUser} isLoggedIn={isLoggedIn} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} />} />
-            <Route path="/login" element={<LoginPage fetchUser={fetchUser} isLoggedIn={isLoggedIn} />} />
-
-
-            <Route path="/admin" element={<Dashboard currentUser={currentUser} />} />
-            <Route path="/admin/dashboard" element={<Dashboard currentUser={currentUser} />} />
-            <Route path="/admin/inbox" element={<Inbox currentUser={currentUser} />} />
-            <Route path="/admin/orders" element={<Orders currentUser={currentUser} />} />
-            <Route path="/admin/users" element={<Users currentUser={currentUser} />} />
-            <Route path="/admin/products" element={<AdminProducts currentUser={currentUser} />} />
+            
+            { isLoggedIn && (
+              <>
+                <Route path="/profile" element={<ProfilePage isLoggedIn={isLoggedIn} currentUser={currentUser} />} />
+                <Route path="/edit-profile" element={<EditProfile fetchUser={fetchUser} isLoggedIn={isLoggedIn} currentUser={currentUser} setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup}  />} />
+                <Route path="/cart" element={<CartPage cartItems={cartItems} isLoggedIn={isLoggedIn} fetchCartItems={fetchCartItems} />} />
+                <Route path="/checkout" element={<Checkout setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup} currentUser={currentUser} cartItems={cartItems} fetchCartItems={fetchCartItems} isLoggedIn={isLoggedIn} />} />
+              </>
+            )}
+            
+            {currentUser?.role === 'admin' && (
+              <>
+                <Route path="/admin" element={<Dashboard currentUser={currentUser} />} />
+                <Route path="/admin/dashboard" element={<Dashboard currentUser={currentUser} />} />
+                <Route path="/admin/inbox" element={<Inbox currentUser={currentUser} />} />
+                <Route path="/admin/orders" element={<Orders currentUser={currentUser} />} />
+                <Route path="/admin/users" element={<Users currentUser={currentUser} />} />
+                <Route path="/admin/products" element={<AdminProducts currentUser={currentUser} />} />
+              </>
+            )}
           </Routes>
         </>
       )}

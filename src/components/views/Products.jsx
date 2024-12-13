@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // Import Framer Motion
+import { motion, AnimatePresence } from 'framer-motion';
+
 import ProductCard from './ProductCard';
 import {LoadingIndicator} from './LoadingIndicator'
 
 const Products = ({ isLoggedIn, fetchCartItems, searchInput, setPopupType, setPopupMessage, setShowPopup }) => {
-  const apiUrl = import.meta.env.VITE_API_URL
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -67,6 +68,9 @@ const Products = ({ isLoggedIn, fetchCartItems, searchInput, setPopupType, setPo
             isLoggedIn={isLoggedIn}
             fetchCartItems={fetchCartItems}
             onClick={() => setSelectedProduct(product)} // Open modal on product click
+            setPopupType={setPopupType}
+            setPopupMessage={setPopupMessage}
+            setShowPopup={setShowPopup}
           />
         ))}
       </div>
@@ -101,7 +105,9 @@ const Products = ({ isLoggedIn, fetchCartItems, searchInput, setPopupType, setPo
                 product={selectedProduct}
                 isLoggedIn={isLoggedIn}
                 fetchCartItems={fetchCartItems}
-                setPopupType={setPopupType} setPopupMessage={setPopupMessage} setShowPopup={setShowPopup}
+                setPopupType={setPopupType} 
+                setPopupMessage={setPopupMessage} 
+                setShowPopup={setShowPopup}
               />
             </motion.div>
           </motion.div>
